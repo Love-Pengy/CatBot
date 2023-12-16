@@ -1,16 +1,20 @@
 import responses
 import discord 
 import json
+from time import time
+from discord.ext import tasks
 LOG = 0
-TOKEN = "PUT TOKEN HERE" 
+TOKEN = "PUT TOKEN HERE"
 
 class CatBot: 
-    def __init__(self, servers: dict, fp): 
-        self.validChannels = servers.copy
-        print(type(self.validChannels))
-        self.file = fp 
+
+    def __init__(self, servers: dict, fileName): 
+        self.validChannels = servers.copy()
+        self.fileName = fileName 
+        self.startTime = time()
 
     async def sendMessage(self, message, user_message): 
+
         try: 
             response = responses.getResponse(user_message)
             if(response is None): 
@@ -35,6 +39,7 @@ class CatBot:
 
         @client.event
         async def on_message(message): 
+
             if(message.author == client.user): 
                 return
 
@@ -48,19 +53,27 @@ class CatBot:
 
             if(userMessage == ":3 setup"): 
                 self.channelSetup(channel, server)
-            else: 
+
+            elif(userMessage == ":3 cat"): 
                 if((server in self.validChannels) and (self.validChannels[server] == channel)): 
                     await self.sendMessage(message, userMessage)
-                else:
-                    self.channelSetup(channel, server)
-
+            
+            elif(userMessage == ":3 timer"): 
+                #SET INTERVAL FOR THE SERVER TO WHATEVER IS SPECIFIED
+                print("timer")
+            else: 
+                await self.sendMessage(message, userMessage)
+             
+            
+        @tasks.loop(minutes=1) 
+        async def catTimer(): 
+            #PROBLEM HERE IS WHERE TO SEND IT, CURRENT SOLUTION IS TO STORE THE TIME INFORMATION IN A JSON FILE
+            pass
 
         client.run(TOKEN)
 
     def channelSetup(self, channel, server):
-        if(server in self.validChannels): 
-            self.validChannels = channel
-        else: 
-            self.validChannels[server] = channel
-        print(type(self.validChannels))
-        json.dump(self.validChannels, self.file)
+        self.validChannels[server] = channel
+        print(self.validChannels)  
+        with open(self.fileName, 'w') as f: 
+            json.dump(self.validChannels, f, separators=(',', ':'))

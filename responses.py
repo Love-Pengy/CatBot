@@ -1,6 +1,5 @@
 import requests
 import discord
-global num 
 
 def counter(): 
     num = 0
@@ -20,7 +19,12 @@ def getResponse(message) -> str:
         return("mrow! :3")
     
     if(userMessage == ":3 help"): 
-        return("`help message :3`")
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="Prefix", value = "**:3**", inline=False)
+        embed.add_field(name="Setup", value="**:3 setup**: Set channel to allow cat requests within", inline=False)
+        embed.add_field(name="Usage", value="**:3 cat**: Request another cat!", inline=False)
+        return(embed)
     
     if(userMessage == ":3 cat"): 
     
@@ -39,6 +43,7 @@ def getResponse(message) -> str:
     return
 
 def getRandomCatImageUrl(): 
+
     request = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png')
     json = request.json()
     try: 
