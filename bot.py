@@ -3,15 +3,22 @@ import discord
 import json
 from time import time
 from discord.ext import tasks
+
+DAY = 86400
 LOG = 0
 TOKEN = "PUT TOKEN HERE"
 
+
+
 class CatBot: 
 
-    def __init__(self, servers: dict, fileName): 
-        self.validChannels = servers.copy()
-        self.fileName = fileName 
-        self.startTime = time()
+    def __init__(self, config: list, fileName): 
+        if(config is None): 
+            self.config = list()
+            self.fileName = fileName
+        else: 
+            self.config = config
+            self.fileName = fileName 
 
     async def sendMessage(self, message, user_message): 
 
@@ -36,6 +43,7 @@ class CatBot:
         @client.event
         async def on_ready(): 
             print(f"{client.user} is now running")
+            await catTimer()
 
         @client.event
         async def on_message(message): 
@@ -55,25 +63,80 @@ class CatBot:
                 self.channelSetup(channel, server)
 
             elif(userMessage == ":3 cat"): 
-                if((server in self.validChannels) and (self.validChannels[server] == channel)): 
-                    await self.sendMessage(message, userMessage)
-            
-            elif(userMessage == ":3 timer"): 
+
+                for i, d in enumerate(self.config): 
+                    try: 
+                        if((server == d["server"]) and (d["channel"] == channel)): 
+                            await self.sendMessage(message, userMessage)
+                            break
+                    except KeyError: 
+                        continue
+
+                else: 
+                    await self.sendMessage(message, "Invalid Channel")
+
+            elif(userMessage.startswith(":3 timer")): 
                 #SET INTERVAL FOR THE SERVER TO WHATEVER IS SPECIFIED
-                print("timer")
+                try: 
+                    for d, i in enumerate(self.config): 
+                        if((d["server"] == server) and (d["channel"] == channel)): 
+                            d["interval"] = int(userMessage[9:])
+                            break 
+                    else: 
+                        await self.sendMessage(message, "Invalid Timer Channel")
+
+                except KeyError as e: 
+                    print(e)
+                
             else: 
                 await self.sendMessage(message, userMessage)
              
-            
-        @tasks.loop(minutes=1) 
+        @client.event
         async def catTimer(): 
-            #PROBLEM HERE IS WHERE TO SEND IT, CURRENT SOLUTION IS TO STORE THE TIME INFORMATION IN A JSON FILE
-            pass
+            if(self.config is not None): 
+                for i, d in enumerate(self.config):
+                    print(d)
+                    if(time() - (d["lastTime"]/d["interval"])): 
+                        message = discord.Message()
+                        message.channel = d["channel"]
+                        message.guild = d["server"]
+                        await self.sendMessage(message, ":3 cat")
+                        print("time has elapsed")
+
+
 
         client.run(TOKEN)
 
     def channelSetup(self, channel, server):
-        self.validChannels[server] = channel
-        print(self.validChannels)  
-        with open(self.fileName, 'w') as f: 
-            json.dump(self.validChannels, f, separators=(',', ':'))
+
+        for i, d in enumerate(self.config): 
+            try: 
+                #print(f"{d[server]=}, {server=}")
+                print(f"{i=}", d["server"])
+                if(d["server"] == server): 
+                    if(channel != d["channel"]): 
+                        print(channel)
+                        self.config[i]["channel"] = channel
+                        with open(self.fileName, 'w') as f: 
+                            json.dump(self.config, f, separators=(',', ':'))
+                            break
+                    else: 
+                        break
+
+            except KeyError as key: 
+                print("error with", key) 
+                pass
+
+        else: 
+            newDict = dict()
+            newDict["server"] = server 
+            newDict["channel"] = channel
+            newDict["interval"] = 1
+            midnight = (int(time() // 86400)) * 86400
+            newDict["lastTime"] = midnight
+            self.config.append(newDict)
+            with open(self.fileName, 'w') as f: 
+                json.dump(self.config, f, separators=(',', ':'))
+
+        
+

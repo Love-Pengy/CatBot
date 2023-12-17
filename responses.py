@@ -1,6 +1,7 @@
 import requests
 import discord
 
+
 def counter(): 
     num = 0
     while True: 
@@ -14,6 +15,12 @@ def getResponse(message) -> str:
     
     if(userMessage == ":3"): 
         return(":3")
+
+    if(userMessage == "invalid channel"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value = "Invalid Channel! Type **:3 help** for help! :3")
+        return(embed)
 
     if(userMessage  == "meow"): 
         return("mrow! :3")
@@ -39,6 +46,12 @@ def getResponse(message) -> str:
             return(embed)
         else: 
             return(None)
+    
+    if(userMessage.startswith(":3 timer")): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value = f"Images Will Be Sent *{int(userMessage[9:])}* Times A Day! :3")
+        return(embed)
 
     return
 
