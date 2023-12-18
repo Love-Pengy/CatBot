@@ -10,6 +10,7 @@ DAY = 86400
 LOG = 0
 TOKEN = "PUT TOKEN HERE"
 MAXDAILYCATS = 1440
+STARTUPCHANNELID = "PUT ID INT HERE"
 
 
 
@@ -27,7 +28,6 @@ class CatBot:
 
         if(message is not None): 
             try: 
-                print(type(message.channel))
                 response = responses.getResponse(user_message)
                 if(response is None): 
                     await message.channel.send("Error Has Occured Please Try Again :3")
@@ -57,7 +57,7 @@ class CatBot:
 
         @self.client.event
         async def on_ready(): 
-            await self.client.get_channel(1186141210033787000).send(f"[{datetime.now()}] ~ Meow")
+            await self.client.get_channel(STARTUPCHANNELID).send(f"[{datetime.now()}] ~ Meow")
             print(f"{self.client.user} is now running")
 
         @self.client.event
@@ -99,8 +99,9 @@ class CatBot:
 
             elif(userMessage.startswith(":3 timer")): 
                 #SET INTERVAL FOR THE SERVER TO WHATEVER IS SPECIFIED
-                timerNum = int(userMessage[9:])
-                if((timerNum <= MAXDAILYCATS) and (timerNum != 0)):
+                floatChecker = float(userMessage[9:]).is_integer()
+                timerNum = int(float(userMessage[9:]))
+                if((timerNum <= MAXDAILYCATS) and (timerNum != 0) and floatChecker and not(timerNum < 0)):
                     try: 
                         for i, d in enumerate(self.config): 
                             if((d["server"] == server) and (d["channel"] == channel)): 
@@ -111,7 +112,7 @@ class CatBot:
                                 embed.color = discord.Color.pink()
                                 interval = d["interval"]
                                 if(d["interval"] <= 12): 
-                                    embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)}** Hours! :3")
+                                    embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)/60}** Hours! :3")
                                 else:  
                                     embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)}** Minutes! :3")
 
@@ -124,17 +125,20 @@ class CatBot:
                     except KeyError as e: 
                         print(e)
                 else: 
-                    if(timerNum != 0): 
+                    if(timerNum == 0): 
+                        await self.sendMessage(message, "Interval Of 0")
+
+                    elif(timerNum < 0): 
+                        await self.sendMessage(message, "Negative Interval")
+
+                    elif(not floatChecker):                         
+                        await self.sendMessage(message, "Invalid Interval Type")
+
+                    else: 
                         embed = discord.Embed()
                         embed.color = discord.Color.pink()
                         embed.add_field(name="", value=f"Value Exceeds Max Daily Cat Value Of: **{MAXDAILYCATS}**! :3")
                         await message.channel.send(embed=embed)
-                    else: 
-                        embed = discord.Embed()
-                        embed.color = discord.Color.pink()
-                        embed.add_field(name="", value="Please Enter A Valid Number Of Cats! :3")
-                        await message.channel.send(embed=embed)
-                        
                 
             else: 
                 await self.sendMessage(message, userMessage)
@@ -142,7 +146,6 @@ class CatBot:
         @self.client.event
         async def catTimer(): 
             while True: 
-                print("cat timer called")
                 try: 
                     if(self.config is not None): 
                         for i, d in enumerate(self.config):
@@ -154,6 +157,7 @@ class CatBot:
                                 print("time has elapsed")
                 except AttributeError as e: 
                     print(e)
+                    asyncio.sleep(30)
                     continue
                 await asyncio.sleep(10)
 

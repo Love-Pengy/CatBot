@@ -28,12 +28,19 @@ def getResponse(message) -> str:
         embed = discord.Embed()
         embed.color = discord.Color.pink()
         embed.add_field(name="Prefix", value = "**:3**", inline=False)
-        embed.add_field(name="Setup", value="**:3 setup**: Set channel to allow cat requests within", inline=False)
-        embed.add_field(name="Usage", value="**:3 cat**: Request another cat!", inline=False)
+        embed.add_field(name="Setup", value="**:3 setup**: Set Channel To Allow Cat Requests Within", inline=False)
+        embed.add_field(name="Interval", value="**:3 timer {time}**: Set Amount Of Times Per Day Cats Are Automatically Sent", inline=False)
+        embed.add_field(name="Usage", value="**:3 cat**: Request Another Cat!", inline=False)        
         return(embed)
+
+    if(userMessage == "invalid interval type"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value="Please Enter An Integer For The Cat Interval! :3")
+        return(embed)
+
     
     if(userMessage == ":3 cat"): 
-    
         currCat = next(catCounter)
         url = getRandomCatImageUrl()
         if(url is not None): 
@@ -45,7 +52,18 @@ def getResponse(message) -> str:
             return(embed)
         else: 
             return(None)
-    
+
+    if(userMessage == "negative interval"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value="You're Smart! But Uh I Can't Do Math... Please Enter A Non-Negative Number! :3")
+        return(embed)
+
+    if(userMessage == "interval of 0"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value="You Can't Have 0 Cats Silly! Please Try Again! :3")
+        return(embed)
 
     return
 
