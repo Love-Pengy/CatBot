@@ -25,7 +25,6 @@ if __name__ == '__main__':
     with open(TOKENFILE, 'r') as t: 
         try: 
             idJson = json.load(t)
-            print(idJson)
             channelId = idJson[0]["channelId"]
         except JSONDecodeError: 
             print("CHANNELID was not specified")

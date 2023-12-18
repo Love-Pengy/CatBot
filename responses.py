@@ -20,6 +20,11 @@ def getResponse(message) -> str:
         embed.color = discord.Color.pink()
         embed.add_field(name="", value = "Invalid Channel! Type **:3 help** for help! :3")
         return(embed)
+    if(userMessage == "invalid timer channel"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value = "Please Try Again In The Channel That Is Setup For Cats! :3")
+        return(embed)
 
     if(userMessage  == "meow"): 
         return("mrow! :3")
@@ -30,8 +35,16 @@ def getResponse(message) -> str:
         embed.add_field(name="Prefix", value = "**:3**", inline=False)
         embed.add_field(name="Setup", value="**:3 setup**: Set Channel To Allow Cat Requests Within", inline=False)
         embed.add_field(name="Interval", value="**:3 timer {time}**: Set Amount Of Times Per Day Cats Are Automatically Sent", inline=False)
+        embed.add_field(name="", value="**:3 timer remove**: Disable The Automatic Sending Of Cats! :3", inline=False)
         embed.add_field(name="Usage", value="**:3 cat**: Request Another Cat!", inline=False)        
         return(embed)
+
+    if(userMessage == "timer value not specified"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.add_field(name="", value="Interval Not Specified. Please Try Again! :3", inline=False)        
+        return(embed)
+
 
     if(userMessage == "invalid interval type"): 
         embed = discord.Embed()

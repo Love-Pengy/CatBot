@@ -31,8 +31,10 @@ class CatBot:
             try: 
                 response = responses.getResponse(user_message)
                 if(response is None): 
-                    await message.channel.send("Error Has Occured Please Try Again :3")
-
+                    if(user_message.startswith(":3")): 
+                        await message.channel.send("Error Has Occured Please Try Again :3")
+                    else: 
+                        return
                 elif(isinstance(response, discord.Embed)): 
                     await message.channel.send(embed=response)
                 else: 
@@ -75,9 +77,6 @@ class CatBot:
             server = str(message.channel.guild)
             channelId = int(message.channel.id)
             
-            if(LOG):  
-                print(f"{username=}, {userMessage=}, {channel=}")
-
             if(userMessage == ":3 setup"): 
                 self.channelSetup(channel, server, channelId)
                 embed = discord.Embed()
@@ -102,49 +101,78 @@ class CatBot:
 
             elif(userMessage.startswith(":3 timer")): 
                 #SET INTERVAL FOR THE SERVER TO WHATEVER IS SPECIFIED
-                floatChecker = float(userMessage[9:]).is_integer()
-                timerNum = int(float(userMessage[9:]))
-                if((timerNum <= MAXDAILYCATS) and (timerNum != 0) and floatChecker and not(timerNum < 0)):
+                removeChecker = str(userMessage[9:])
+                if(removeChecker == "remove"): 
+                    for i, d in enumerate(self.config): 
+                        if((d["server"] == server) and (d["channel"] == channel)): 
+                            d["interval"] = 0
+                            with open(self.fileName, 'w') as f: 
+                                json.dump(self.config, f, separators=(',', ':'))
+                            embed = discord.Embed()
+                            embed.color = discord.Color.pink()
+                            interval = d["interval"]
+                            embed.add_field(name="", value="Cats Will No Longer Be Sent In This Channel Automatically! :3")
+                            await message.channel.send(embed=embed)
+                            break 
+                    else: 
+                        await self.sendMessage(message, "Invalid Timer Channel")
+
+                elif((removeChecker == "") or (removeChecker == " ")): 
                     try: 
                         for i, d in enumerate(self.config): 
                             if((d["server"] == server) and (d["channel"] == channel)): 
-                                d["interval"] = int(userMessage[9:])
-                                with open(self.fileName, 'w') as f: 
-                                    json.dump(self.config, f, separators=(',', ':'))
-                                embed = discord.Embed()
-                                embed.color = discord.Color.pink()
-                                interval = d["interval"]
-                                if(d["interval"] <= 12): 
-                                    embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)/60}** Hours! :3")
-                                else:  
-                                    embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)}** Minutes! :3")
-
-                                await message.channel.send(embed=embed)
-                                break 
+                                await self.sendMessage(message, "Timer Value Not Specified")
+                                break
                         else: 
                             await self.sendMessage(message, "Invalid Timer Channel")
-                                
-
                     except KeyError as e: 
                         print(e)
+
+
                 else: 
-                    if(timerNum == 0): 
-                        await self.sendMessage(message, "Interval Of 0")
+                    floatChecker = float(userMessage[9:]).is_integer()
+                    timerNum = int(float(userMessage[9:]))
+                    if((timerNum <= MAXDAILYCATS) and (timerNum != 0) and floatChecker and not(timerNum < 0) and not(removeChecker == "remove")):
+                        try: 
+                            for i, d in enumerate(self.config): 
+                                if((d["server"] == server) and (d["channel"] == channel)): 
+                                    d["interval"] = int(userMessage[9:])
+                                    with open(self.fileName, 'w') as f: 
+                                        json.dump(self.config, f, separators=(',', ':'))
+                                    embed = discord.Embed()
+                                    embed.color = discord.Color.pink()
+                                    interval = d["interval"]
+                                    if(d["interval"] <= 12): 
+                                        embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)/60}** Hours! :3")
+                                    else:  
+                                        embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)}** Minutes! :3")
 
-                    elif(timerNum < 0): 
-                        await self.sendMessage(message, "Negative Interval")
+                                    await message.channel.send(embed=embed)
+                                    break 
+                            else: 
+                                await self.sendMessage(message, "Invalid Timer Channel")
+                                    
 
-                    elif(not floatChecker):                         
-                        await self.sendMessage(message, "Invalid Interval Type")
-
+                        except KeyError as e: 
+                            print(e)
                     else: 
-                        embed = discord.Embed()
-                        embed.color = discord.Color.pink()
-                        embed.add_field(name="", value=f"Value Exceeds Max Daily Cat Value Of: **{MAXDAILYCATS}**! :3")
-                        await message.channel.send(embed=embed)
-                
+                        if(timerNum == 0): 
+                            await self.sendMessage(message, "Interval Of 0")
+
+                        elif(timerNum < 0): 
+                            await self.sendMessage(message, "Negative Interval")
+
+                        elif(not floatChecker):                         
+                            await self.sendMessage(message, "Invalid Interval Type")
+
+                        else: 
+                            embed = discord.Embed()
+                            embed.color = discord.Color.pink()
+                            embed.add_field(name="", value=f"Value Exceeds Max Daily Cat Value Of: **{MAXDAILYCATS}**! :3")
+                            await message.channel.send(embed=embed)
             else: 
                 await self.sendMessage(message, userMessage)
+                    
              
         @self.client.event
         async def catTimer(): 
@@ -152,12 +180,12 @@ class CatBot:
                 try: 
                     if(self.config is not None): 
                         for i, d in enumerate(self.config):
-                            if((d["lastTime"] + (DAY/d["interval"]) < time())): 
-                                d["lastTime"] = time()
-                                with open(self.fileName, 'w') as f: 
-                                    json.dump(self.config, f, separators=(',', ':'))
-                                await self.sendMessage(None, ":3 cat", d["channelId"])
-                                print("time has elapsed")
+                            if(d["interval"] != 0): 
+                                if((d["lastTime"] + (DAY/d["interval"]) < time())): 
+                                    d["lastTime"] = time()
+                                    with open(self.fileName, 'w') as f: 
+                                        json.dump(self.config, f, separators=(',', ':'))
+                                    await self.sendMessage(None, ":3 cat", d["channelId"])
                 except AttributeError as e: 
                     print(e)
                     await asyncio.sleep(30)
@@ -167,7 +195,6 @@ class CatBot:
         async def main(): 
             async with self.client: 
                 asyncio.create_task(catTimer())
-                print("DEBUG:", self.TOKEN)
                 await self.client.start(self.TOKEN)
 
         asyncio.run(main())
@@ -177,7 +204,6 @@ class CatBot:
             try: 
                 if(d["server"] == server): 
                     if(channel != d["channel"]): 
-                        print(channel)
                         self.config[i]["channel"] = channel
                         if(channelId): 
                             self.config[i]["channelId"] = channelId
