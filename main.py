@@ -22,6 +22,7 @@ if __name__ == '__main__':
         except JSONDecodeError: 
             print("JSON is empty")
             exception = 1
+
         if(exception): 
             kitty = bot.CatBot(None, CONFIGFILE)
             kitty.runDiscordBot()

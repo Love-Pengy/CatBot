@@ -10,7 +10,6 @@ def counter():
 catCounter = counter()
 
 def getResponse(message) -> str: 
-
     userMessage = message.lower()
     
     if(userMessage == ":3"): 
@@ -47,11 +46,6 @@ def getResponse(message) -> str:
         else: 
             return(None)
     
-    if(userMessage.startswith(":3 timer")): 
-        embed = discord.Embed()
-        embed.color = discord.Color.pink()
-        embed.add_field(name="", value = f"Images Will Be Sent *{int(userMessage[9:])}* Times A Day! :3")
-        return(embed)
 
     return
 
