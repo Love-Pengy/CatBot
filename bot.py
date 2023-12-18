@@ -8,24 +8,25 @@ from datetime import datetime
 
 DAY = 86400
 LOG = 0
-TOKEN = "PUT TOKEN HERE"
 MAXDAILYCATS = 1440
-STARTUPCHANNELID = "PUT ID INT HERE"
 
 
 
 class CatBot: 
 
-    def __init__(self, config: list, fileName): 
+    def __init__(self, config: list, fileName, token, startUpId=None): 
         if(config is None): 
             self.config = list()
             self.fileName = fileName
         else: 
             self.config = config
             self.fileName = fileName 
+        if(startUpId is not None): 
+            self.STARTUPCHANNELID = startUpId
+        if(token is not None): 
+            self.TOKEN = token
 
     async def sendMessage(self, message, user_message, channelId=None):
-
         if(message is not None): 
             try: 
                 response = responses.getResponse(user_message)
@@ -57,7 +58,9 @@ class CatBot:
 
         @self.client.event
         async def on_ready(): 
-            await self.client.get_channel(STARTUPCHANNELID).send(f"[{datetime.now()}] ~ Meow")
+            if(self.STARTUPCHANNELID): 
+                await self.client.get_channel(self.STARTUPCHANNELID).send(f"[{datetime.now()}] ~ Meow")
+
             print(f"{self.client.user} is now running")
 
         @self.client.event
@@ -157,23 +160,21 @@ class CatBot:
                                 print("time has elapsed")
                 except AttributeError as e: 
                     print(e)
-                    asyncio.sleep(30)
+                    await asyncio.sleep(30)
                     continue
                 await asyncio.sleep(10)
 
         async def main(): 
             async with self.client: 
                 asyncio.create_task(catTimer())
-                await self.client.start(TOKEN)
+                print("DEBUG:", self.TOKEN)
+                await self.client.start(self.TOKEN)
 
         asyncio.run(main())
 
     def channelSetup(self, channel, server, channelId=None):
-
         for i, d in enumerate(self.config): 
             try: 
-                #print(f"{d[server]=}, {server=}")
-                print(f"{i=}", d["server"])
                 if(d["server"] == server): 
                     if(channel != d["channel"]): 
                         print(channel)
