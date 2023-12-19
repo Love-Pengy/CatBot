@@ -84,9 +84,28 @@ class CatBot:
                 embed.add_field
                 embed.add_field(name="", value="Cats Will Now Be Sent In This Channel! :3")
                 await message.channel.send(embed=embed)
+
+            elif(userMessage == "woof"): 
+                await self.sendMessage(message, userMessage)
+
+            elif(userMessage == "arf"): 
+                await self.sendMessage(message, userMessage)
+
+            elif((userMessage == ":3 woof") or (userMessage == ":3 dog")): 
+
+                for i, d in enumerate(self.config): 
+                    try: 
+                        if((server == d["server"]) and (d["channel"] == channel)): 
+                            await self.sendMessage(message, userMessage)
+                            break
+                    except KeyError: 
+                        continue
+
+                else: 
+                    await self.sendMessage(message, "Invalid Channel")
                 
 
-            elif(userMessage == ":3 cat"): 
+            elif((userMessage == ":3 cat") or (userMessage == ":3 meow")): 
 
                 for i, d in enumerate(self.config): 
                     try: 
@@ -198,6 +217,7 @@ class CatBot:
                 await self.client.start(self.TOKEN)
 
         asyncio.run(main())
+
 
     def channelSetup(self, channel, server, channelId=None):
         for i, d in enumerate(self.config): 

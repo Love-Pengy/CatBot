@@ -28,15 +28,24 @@ def getResponse(message) -> str:
 
     if(userMessage  == "meow"): 
         return("mrow! :3")
+
+    if(userMessage == "nyan"): 
+        embed = discord.Embed()
+        embed.color = discord.Color.pink()
+        embed.set_image(url="https://media1.tenor.com/m/9fV87rRDzDgAAAAC/ansubin0925hellomynameissoobin.gif")
+        embed.title = "Cat! :3"
+        return(embed)
     
     if(userMessage == ":3 help"): 
         embed = discord.Embed()
         embed.color = discord.Color.pink()
         embed.add_field(name="Prefix", value = "**:3**", inline=False)
-        embed.add_field(name="Setup", value="**:3 setup**: Set Channel To Allow Cat Requests Within", inline=False)
-        embed.add_field(name="Interval", value="**:3 timer {time}**: Set Amount Of Times Per Day Cats Are Automatically Sent", inline=False)
+        embed.add_field(name="Setup", value="**:3 setup**: Set Channel To Allow Cat Requests Within!", inline=False)
+        embed.add_field(name="Interval", value="**:3 timer {time}**: Set Amount Of Times Per Day Cats Are Automatically Sent!", inline=False)
         embed.add_field(name="", value="**:3 timer remove**: Disable The Automatic Sending Of Cats! :3", inline=False)
-        embed.add_field(name="Usage", value="**:3 cat**: Request Another Cat!", inline=False)        
+        embed.add_field(name="Usage", value="**:3 cat or :3 meow**: Request Another Cat!", inline=False)        
+        embed.add_field(name="", value="**:3 dog or :3 woof**: Request A Dog Friend!", inline=False)
+        embed.add_field(name="Response Messages", value="nyan, meow, :3, woof, and arf!", inline=False)
         return(embed)
 
     if(userMessage == "timer value not specified"): 
@@ -53,7 +62,7 @@ def getResponse(message) -> str:
         return(embed)
 
     
-    if(userMessage == ":3 cat"): 
+    if((userMessage == ":3 cat") or (userMessage == ":3 meow")): 
         currCat = next(catCounter)
         url = getRandomCatImageUrl()
         if(url is not None): 
@@ -65,6 +74,20 @@ def getResponse(message) -> str:
             return(embed)
         else: 
             return(None)
+    if(userMessage == "woof"): 
+       return("meeeoof!...I'm Still Working On It :3")
+
+    if(userMessage == "arf"): 
+       return("mearf!...Look At Me I'm Getting Good! :3")
+
+    if((userMessage == ":3 dog") or (userMessage == ":3 woof")): 
+        url = getRandomDogImageUrl()
+        if(url is not None): 
+            embed = discord.Embed()
+            embed.title = "Check Out My Friend! :3"
+            embed.color = discord.Color.pink()
+            embed.set_image(url=url)
+            return(embed)
 
     if(userMessage == "negative interval"): 
         embed = discord.Embed()
@@ -90,3 +113,21 @@ def getRandomCatImageUrl():
         print(e)
         return(None)
     return(url)  
+
+
+
+def getRandomDogImageUrl(): 
+    request = requests.get('https://api.thedogapi.com/v1/images/search?mime_types=jpg,png')
+    json = request.json()
+    try: 
+        url = json[0]['url']
+    except Exception as e: 
+        print(e)
+        return(None)
+    return(url)  
+
+
+
+
+
+
