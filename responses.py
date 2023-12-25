@@ -1,7 +1,7 @@
 import requests
 import discord
-
-
+import asyncio
+from datetime import datetime
 def counter(): 
     num = 0
     while True: 
@@ -104,9 +104,13 @@ def getResponse(message) -> str:
     return
 
 def getRandomCatImageUrl(): 
-
     request = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png')
-    json = request.json()
+    try: 
+        json = request.json()
+    except json.decoder.JSONDecodeError as e: 
+       print(e, datetime.now())
+       asyncio.sleep(5) 
+       return(getRandomCatImageUrl())
     try: 
         url = json[0]['url']
     except Exception as e: 
