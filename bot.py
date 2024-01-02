@@ -200,6 +200,7 @@ class CatBot:
                     if(self.config is not None): 
                         for i, d in enumerate(self.config):
                             if(d["interval"] != 0): 
+                                print((d["lastTime"] + (DAY/d["interval"])), time())
                                 if((d["lastTime"] + (DAY/d["interval"]) < time())): 
                                     d["lastTime"] = time()
                                     with open(self.fileName, 'w') as f: 
