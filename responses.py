@@ -3,10 +3,25 @@ import discord
 import asyncio
 from datetime import datetime
 def counter(): 
-    num = 0
+    try: 
+        with open("numCats", "r") as f: 
+            num = f.readline() 
+            if(num == ''): 
+                num = str(0)
+            num = int(num) + 1
+
+    except Exception as e: 
+        print(e)
+        num = 0
+        with open("numCats", "w") as f: 
+            f.write(str(0))
+
     while True: 
         yield num 
         num += 1
+        with open("numCats", "w") as f: 
+            f.write(str(num))
+
 catCounter = counter()
 
 def getResponse(message) -> str: 
