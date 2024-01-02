@@ -17,12 +17,12 @@ def getResponse(message) -> str:
 
     if(userMessage == "invalid channel"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="", value = "Invalid Channel! Type **:3 help** for help! :3")
         return(embed)
     if(userMessage == "invalid timer channel"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="", value = "Please Try Again In The Channel That Is Setup For Cats! :3")
         return(embed)
 
@@ -31,14 +31,14 @@ def getResponse(message) -> str:
 
     if(userMessage == "nyan"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.set_image(url="https://media1.tenor.com/m/9fV87rRDzDgAAAAC/ansubin0925hellomynameissoobin.gif")
         embed.title = "Cat! :3"
         return(embed)
     
     if(userMessage == ":3 help"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="Prefix", value = "**:3**", inline=False)
         embed.add_field(name="Setup", value="**:3 setup**: Set Channel To Allow Cat Requests Within!", inline=False)
         embed.add_field(name="Interval", value="**:3 timer {time}**: Set Amount Of Times Per Day Cats Are Automatically Sent!", inline=False)
@@ -50,14 +50,14 @@ def getResponse(message) -> str:
 
     if(userMessage == "timer value not specified"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="", value="Interval Not Specified. Please Try Again! :3", inline=False)        
         return(embed)
 
 
     if(userMessage == "invalid interval type"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="", value="Please Enter An Integer For The Cat Interval! :3")
         return(embed)
 
@@ -68,7 +68,7 @@ def getResponse(message) -> str:
         if(url is not None): 
             embed = discord.Embed(
                 title = f'Meow Meow Maruader #{currCat}', 
-                color = discord.Color.pink()
+                color = discord.Color.from_rgb(255,192,203)
             )
             embed.set_image(url=url)
             return(embed)
@@ -85,19 +85,19 @@ def getResponse(message) -> str:
         if(url is not None): 
             embed = discord.Embed()
             embed.title = "Check Out My Friend! :3"
-            embed.color = discord.Color.pink()
+            embed.color = discord.Color.from_rgb(255,192,203)
             embed.set_image(url=url)
             return(embed)
 
     if(userMessage == "negative interval"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="", value="You're Smart! But Uh I Can't Do Math... Please Enter A Non-Negative Number! :3")
         return(embed)
 
     if(userMessage == "interval of 0"): 
         embed = discord.Embed()
-        embed.color = discord.Color.pink()
+        embed.color = discord.Color.from_rgb(255,192,203)
         embed.add_field(name="", value="You Can't Have 0 Cats Silly! Please Try Again! :3")
         return(embed)
 
@@ -111,6 +111,12 @@ def getRandomCatImageUrl():
        print(e, datetime.now())
        asyncio.sleep(5) 
        return(getRandomCatImageUrl())
+
+    except json.RequestsJSONDecodeError as e: 
+        print(e, datetime.now())
+        asyncio.sleep(5)
+        return(getRandomCatImageUrl())
+
     try: 
         url = json[0]['url']
     except Exception as e: 
@@ -119,10 +125,20 @@ def getRandomCatImageUrl():
     return(url)  
 
 
-
 def getRandomDogImageUrl(): 
     request = requests.get('https://api.thedogapi.com/v1/images/search?mime_types=jpg,png')
-    json = request.json()
+    try:  
+        json = request.json()
+    except json.decoder.JSONDecodeError as e: 
+       print(e, datetime.now())
+       asyncio.sleep(5) 
+       return(getRandomDogImageUrl())
+
+    except json.RequestsJSONDecodeError as e: 
+        print(e, datetime.now())
+        asyncio.sleep(5)
+        return(getRandomCatImageUrl())
+
     try: 
         url = json[0]['url']
     except Exception as e: 

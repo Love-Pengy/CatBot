@@ -80,7 +80,7 @@ class CatBot:
             if(userMessage == ":3 setup"): 
                 self.channelSetup(channel, server, channelId)
                 embed = discord.Embed()
-                embed.color = discord.Color.pink()
+                embed.color = discord.Color.from_rgb(255,192,203)
                 embed.add_field
                 embed.add_field(name="", value="Cats Will Now Be Sent In This Channel! :3")
                 await message.channel.send(embed=embed)
@@ -128,7 +128,7 @@ class CatBot:
                             with open(self.fileName, 'w') as f: 
                                 json.dump(self.config, f, separators=(',', ':'))
                             embed = discord.Embed()
-                            embed.color = discord.Color.pink()
+                            embed.color = discord.Color.from_rgb(255,192,203)
                             interval = d["interval"]
                             embed.add_field(name="", value="Cats Will No Longer Be Sent In This Channel Automatically! :3")
                             await message.channel.send(embed=embed)
@@ -159,7 +159,7 @@ class CatBot:
                                     with open(self.fileName, 'w') as f: 
                                         json.dump(self.config, f, separators=(',', ':'))
                                     embed = discord.Embed()
-                                    embed.color = discord.Color.pink()
+                                    embed.color = discord.Color.from_rgb(255,192,203)
                                     interval = d["interval"]
                                     if(d["interval"] <= 12): 
                                         embed.add_field(name="", value=f"Cats Will Now Be Sent Every **{(1440/interval)/60}** Hours! :3")
@@ -186,7 +186,7 @@ class CatBot:
 
                         else: 
                             embed = discord.Embed()
-                            embed.color = discord.Color.pink()
+                            embed.color = discord.Color.from_rgb(255,192,203)
                             embed.add_field(name="", value=f"Value Exceeds Max Daily Cat Value Of: **{MAXDAILYCATS}**! :3")
                             await message.channel.send(embed=embed)
             else: 
