@@ -2,6 +2,7 @@ import requests
 import discord
 import asyncio
 from datetime import datetime
+
 def counter(): 
     try: 
         with open("numCats", "r") as f: 
@@ -58,6 +59,7 @@ def getResponse(message) -> str:
         embed.add_field(name="Setup", value="**:3 setup**: Set Channel To Allow Cat Requests Within!", inline=False)
         embed.add_field(name="Interval", value="**:3 timer {time}**: Set Amount Of Times Per Day Cats Are Automatically Sent!", inline=False)
         embed.add_field(name="", value="**:3 timer remove**: Disable The Automatic Sending Of Cats! :3", inline=False)
+        embed.add_field(name="", value="**:3 timer current**: See The Rate At Which The Automatic Sending Of Cats Occurs! :3", inline=False)
         embed.add_field(name="Usage", value="**:3 cat or :3 meow**: Request Another Cat!", inline=False)        
         embed.add_field(name="", value="**:3 dog or :3 woof**: Request A Dog Friend!", inline=False)
         embed.add_field(name="Response Messages", value="nyan, meow, :3, woof, and arf!", inline=False)

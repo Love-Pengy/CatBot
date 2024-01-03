@@ -120,8 +120,8 @@ class CatBot:
 
             elif(userMessage.startswith(":3 timer")): 
                 #SET INTERVAL FOR THE SERVER TO WHATEVER IS SPECIFIED
-                removeChecker = str(userMessage[9:])
-                if(removeChecker == "remove"): 
+                checker = str(userMessage[9:])
+                if(checker == "remove"): 
                     for i, d in enumerate(self.config): 
                         if((d["server"] == server) and (d["channel"] == channel)): 
                             d["interval"] = 0
@@ -136,7 +136,29 @@ class CatBot:
                     else: 
                         await self.sendMessage(message, "Invalid Timer Channel")
 
-                elif((removeChecker == "") or (removeChecker == " ")): 
+                elif(checker == "current"): 
+                    try: 
+                        for i, d in enumerate(self.config): 
+                            if((d["server"] == server) and (d["channel"] == channel)): 
+                                embed = discord.Embed()
+                                embed.color = discord.Color.from_rgb(255, 192, 203)
+                                interval = d["interval"]
+                                if(interval <= 12): 
+                                    if(interval == 0): 
+                                        embed.add_field(name="", value="Automatic Cat Sending Is Not Set Up Yet! If You Would Like To Set It Up Use **:3 timer \{amount of times per day\}** :3")                                                              
+                                    else: 
+                                        embed.add_field(name="", value=f"Cats Are Sent Every **{(1440/interval)/60}** Hours! :3")
+                                else: 
+                                    embed.add_field(name="", value=f"Cats Are Sent Every **{(1440/interval)}** Minutes! :3")
+                                await message.channel.send(embed=embed)
+                                break
+                        else: 
+                            await self.sendMessage(message, "Invalid Timer Channel")
+
+                    except KeyError as e: 
+                        print(e)
+
+                elif((checker == "") or (checker == " ")): 
                     try: 
                         for i, d in enumerate(self.config): 
                             if((d["server"] == server) and (d["channel"] == channel)): 
@@ -151,7 +173,7 @@ class CatBot:
                 else: 
                     floatChecker = float(userMessage[9:]).is_integer()
                     timerNum = int(float(userMessage[9:]))
-                    if((timerNum <= MAXDAILYCATS) and (timerNum != 0) and floatChecker and not(timerNum < 0) and not(removeChecker == "remove")):
+                    if((timerNum <= MAXDAILYCATS) and (timerNum != 0) and floatChecker and not(timerNum < 0) and not(checker == "remove")):
                         try: 
                             for i, d in enumerate(self.config): 
                                 if((d["server"] == server) and (d["channel"] == channel)): 
@@ -189,6 +211,7 @@ class CatBot:
                             embed.color = discord.Color.from_rgb(255,192,203)
                             embed.add_field(name="", value=f"Value Exceeds Max Daily Cat Value Of: **{MAXDAILYCATS}**! :3")
                             await message.channel.send(embed=embed)
+
             else: 
                 await self.sendMessage(message, userMessage)
                     
@@ -200,7 +223,6 @@ class CatBot:
                     if(self.config is not None): 
                         for i, d in enumerate(self.config):
                             if(d["interval"] != 0): 
-                                print((d["lastTime"] + (DAY/d["interval"])), time())
                                 if((d["lastTime"] + (DAY/d["interval"]) < time())): 
                                     d["lastTime"] = time()
                                     with open(self.fileName, 'w') as f: 
