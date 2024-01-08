@@ -1,7 +1,7 @@
 # CatBot 
 
 + Discord bot made with python to send cute dogs and cats!
-+ 
+
 ## Features 
 
 + Using **:3 setup** you are able to specify the channel in which the cat commands are able to send
