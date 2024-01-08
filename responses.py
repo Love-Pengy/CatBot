@@ -3,7 +3,7 @@ import discord
 import asyncio
 from datetime import datetime
 
-def counter(): 
+def catCounter(): 
     try: 
         with open("numCats", "r") as f: 
             num = f.readline() 
@@ -23,7 +23,29 @@ def counter():
         with open("numCats", "w") as f: 
             f.write(str(num))
 
-catCounter = counter()
+
+def dogCounter(): 
+    try: 
+        with open("numDogs", "r") as f: 
+            num = f.readline() 
+            if(num == ''): 
+                num = str(0)
+            num = int(num) + 1
+
+    except Exception as e: 
+        print(e)
+        num = 0
+        with open("numDogs", "w") as f: 
+            f.write(str(0))
+
+    while True: 
+        yield num 
+        num += 1
+        with open("numDogs", "w") as f: 
+            f.write(str(num))
+
+dogGen = dogCounter()
+catGen = catCounter()
 
 def getResponse(message) -> str: 
     userMessage = message.lower()
@@ -80,7 +102,7 @@ def getResponse(message) -> str:
 
     
     if((userMessage == ":3 cat") or (userMessage == ":3 meow")): 
-        currCat = next(catCounter)
+        currCat = next(catGen)
         url = getRandomCatImageUrl()
         if(url is not None): 
             embed = discord.Embed(
@@ -99,9 +121,10 @@ def getResponse(message) -> str:
 
     if((userMessage == ":3 dog") or (userMessage == ":3 woof")): 
         url = getRandomDogImageUrl()
+        currDog = next(dogGen)
         if(url is not None): 
             embed = discord.Embed()
-            embed.title = "Check Out My Friend! :3"
+            embed.title = f"Woof Woof Warrior #{currDog}"
             embed.color = discord.Color.from_rgb(255,192,203)
             embed.set_image(url=url)
             return(embed)
