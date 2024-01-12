@@ -50,7 +50,7 @@ class CatBot:
                 await self.client.get_channel(channelId).send(embed=response)
             else: 
                 await self.client.channelId.send(response) 
-            
+
 
         
     def runDiscordBot(self): 
