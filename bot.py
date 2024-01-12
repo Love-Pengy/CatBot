@@ -224,10 +224,16 @@ class CatBot:
                         for i, d in enumerate(self.config):
                             if(d["interval"] != 0): 
                                 if((d["lastTime"] + (DAY/d["interval"]) < time())): 
-                                    d["lastTime"] = time()
-                                    with open(self.fileName, 'w') as f: 
-                                        json.dump(self.config, f, separators=(',', ':'))
-                                    await self.sendMessage(None, ":3 cat", d["channelId"])
+                                    channel = discord.utils.get(self.client.get_all_channels(), guild__name=f'{d["server"]}', name=f'{d["channel"]}')
+                                    if(channel is None): 
+                                        server = d["server"]
+                                        print(f"{server} does not exit")
+                                        continue
+                                    else: 
+                                        d["lastTime"] = time()
+                                        with open(self.fileName, 'w') as f: 
+                                            json.dump(self.config, f, separators=(',', ':'))
+                                        await self.sendMessage(None, ":3 cat", d["channelId"])
                 except AttributeError as e: 
                     print(e)
                     await asyncio.sleep(30)

@@ -30,6 +30,7 @@ if __name__ == '__main__':
             print("CHANNELID was not specified")
             channelId = None
             channelExcept = 1
+
     with open(TOKENFILE, 'r') as t: 
         try: 
             idJson = json.load(t)
