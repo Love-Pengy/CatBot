@@ -28,3 +28,8 @@ https://github.com/Love-Pengy/CatBot/assets/132213413/f7c7833d-5416-4592-8bf4-ee
 
 https://github.com/Love-Pengy/CatBot/assets/132213413/d80d5f08-cff8-4b80-a442-8359fecbe744
 
+
+## Extra 
+
++ Feature to send announcements to every valid set up channel is implemented by way of announcement and announcement.py
+
