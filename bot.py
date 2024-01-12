@@ -227,7 +227,7 @@ class CatBot:
                                     channel = discord.utils.get(self.client.get_all_channels(), guild__name=f'{d["server"]}', name=f'{d["channel"]}')
                                     if(channel is None): 
                                         server = d["server"]
-                                        print(f"{server} does not exit")
+                                        print(f"{server} does not exist")
                                         continue
                                     else: 
                                         d["lastTime"] = time()
