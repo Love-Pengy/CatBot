@@ -1,6 +1,4 @@
 .gitignore
-@@ -0,0 +1,160 @@
-tokens.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -171,3 +169,10 @@ Status
 Docs
 Contact
 Manage cookiesDo not share my personal informationComparing master...main · Love-Pengy/CatBot
+
+
+# Project specific
+numDogs
+numCats
+tokens.json
+serverConfig.json
