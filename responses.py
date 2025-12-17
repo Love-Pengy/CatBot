@@ -1,3 +1,4 @@
+import json
 import requests
 import discord
 import asyncio
@@ -160,7 +161,8 @@ def getResponse(message) -> str:
 def getRandomCatImageUrl():
     request = requests.get('https://api.thecatapi.com/v1/images/search?mime_types=jpg,png')
     try:
-        json = request.json()
+        json_response = request.json()
+
     except json.decoder.JSONDecodeError as e:
         print(e, datetime.now())
         asyncio.sleep(5)
@@ -172,7 +174,7 @@ def getRandomCatImageUrl():
         return (getRandomCatImageUrl())
 
     try:
-        url = json[0]['url']
+        url = json_response[0]['url']
     except Exception as e:
         print(e)
         return (None)
